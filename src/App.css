@@ -47,7 +47,6 @@
   text-decoration: none;
   color: #666;
   font-weight: 500;
-  line-height: 70px;
   transition: color 0.3s ease;
 }
 
@@ -57,7 +56,7 @@
 
 .main-content {
   flex: 1;
-
+  padding: 20px;
 }
 
 .footer {
