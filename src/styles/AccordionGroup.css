@@ -1,0 +1,42 @@
+.accordion-group {
+  width: 100%;
+  margin: 40px 0;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #ddd;
+}
+
+.accordion-header {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.accordion-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: 0 15px;
+}
+
+.accordion-content.open {
+  max-height: 200px;
+  padding: 15px;
+}

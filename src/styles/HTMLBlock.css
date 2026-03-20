@@ -32,7 +32,12 @@
 .html-block-content p {
   margin-bottom: 15px;
 }
-
+.html-block-content strong {
+ color: #0b2c6b;
+}
+.html-block-content p:first-child {
+  margin-top: 0px;
+}
 .html-block-content ul,
 .html-block-content ol {
   margin-bottom: 15px;

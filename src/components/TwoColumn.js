@@ -86,7 +86,7 @@ const TwoColumn = ({
   return (
     <section
       className={`two-column ${bgClass} ${padClass} ${borderClass} ${widthClass} ${alignClass} ${swapClass}`}
-      id={data_id_for_anchor_linking}
+      id={field_component_id}
     >
       <div className="two-column-container">
         <div className="two-column-left">

@@ -1,3 +1,8 @@
+#root {
+  max-width: 2400px;
+    margin: 0 auto;
+}
+
 .page-detail-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -28,10 +33,12 @@ max-width: 100%;
 }
 
 .page-detail h1 {
-  font-size: 2.5rem;
-  line-height: 1.2;
-  margin: 0;
-  color: #333;
+    font-size: 62px;
+    font-weight: 500;
+    line-height: 120%;
+    font-weight: 700;
+  margin-block-end: 16px;
+  color:#002068;
 }
 
 .page-content {
@@ -41,20 +48,20 @@ max-width: 100%;
 }
 
 .page-content p {
-  margin: 20px 0;
+  margin: 16px 0 48px 0;
+  font-family: volta_modern_display55_roman, Arial, Verdana, Tahoma;
 }
 
 .page-content h2 {
-  font-size: 1.8rem;
-  margin: 30px 0 20px 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+        font-family: volta_modern_display75_bold, Arial, Verdana, Tahoma;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 120%;
 }
 
 .page-content h3 {
   font-size: 1.4rem;
   margin: 30px 0 15px 0;
-
 }
 
 .page-content strong {
@@ -68,7 +75,7 @@ max-width: 100%;
 }
 
 .page-content a {
-  color: #0066cc;
+  
   text-decoration: none;
   transition: border-color 0.3s ease;
 }
@@ -130,12 +137,28 @@ max-width: 100%;
   .page-detail {
     padding: 20px;
   }
-
-  .page-detail h1 {
-    font-size: 1.8rem;
+  .heroimage-section {
+    flex-direction: column-reverse;
+    padding-left: 15px;
+    .hero-content {
+      padding-right: 16px;
+    }
   }
-
-  .page-content {
-    font-size: 1rem;
+  .heroimage-section .hero-title {
+    font-size: 26px;
+    margin-block-end: 10px;
+  }
+  .heroimage-section .hero-description {
+     font-size: 16px;
+     p {
+      margin-bottom: 24px;
+     }
+  }
+  .spotlight-content-service,
+  .fullwidth-image {
+      padding: 40px 16px !important;
+  }
+  .spotlight-image img {
+    max-width: 300px;
   }
 }

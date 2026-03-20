@@ -6,6 +6,7 @@ import './Header.css';
 function Header() {
   const [menuItems, setMenuItems] = useState([]);
   const [megaMenu, setMegaMenu] = useState(null);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -13,34 +14,45 @@ function Header() {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const [menuItemsData, megaMenuData] = await Promise.all([
+        const [menuItemsData, megaMenuData, servicesData] = await Promise.all([
           client.fetch(`
-            *[_type == "page" && showInHeaderMenu == true] | order(menuOrder asc, title asc) {
-              _id,
-              title,
-              slug,
-              menuTitle
-            }
-          `),
+    *[_type == "page" && showInHeaderMenu == true] | order(menuOrder asc, title asc) {
+      _id,
+      title,
+      slug,
+      menuTitle
+    }
+  `),
+
           client.fetch(`
-            *[_type == "megaMenu"][0] {
-              title,
-              columns[] {
-                title,
-                links[] {
-                  icon,
-                  title,
-                  description,
-                  "href": coalesce(link->slug.current, ""),
-                  "linkType": link->_type
-                }
-              }
-            }
-          `),
+    *[_type == "megaMenu"][0] {
+      title,
+      columns[] {
+        title,
+        links[] {
+          icon,
+          title,
+          description,
+          "href": coalesce(link->slug.current, ""),
+          "linkType": link->_type
+        }
+      }
+    }
+  `),
+
+          // 🔥 NEW: Services
+          client.fetch(`
+    *[_type == "Services"] | order(title asc) {
+      _id,
+      title,
+      slug
+    }
+  `),
         ]);
 
         setMenuItems(menuItemsData);
         setMegaMenu(megaMenuData);
+        setServices(servicesData);
       } catch (err) {
         console.error('Error fetching menu data:', err);
       } finally {

@@ -8,10 +8,11 @@ import AnchorLinks from "../components/AnchorLinks";
 import FullwidthImage from "../components/FullwidthImage";
 import SpotlightContentService from "../components/SpotlightContentService";
 import TwoColumn from "../components/TwoColumn";
-
+import TopicsSection from "../components/TopicsSection";
+import AccordionGroup from "../components/AccordionGroup";
 import "./PageDetail.css";
 
-const landingPageQuery = `*[_type == "Landingpage" && slug.current == $slug][0]{
+const servicesPageQuery = `*[_type == "Services" && slug.current == $slug][0]{
   _id,
   title,
   slug,
@@ -27,15 +28,20 @@ const landingPageQuery = `*[_type == "Landingpage" && slug.current == $slug][0]{
     logo_or_service_pillar{ asset->{url}, alt },
     link{ label, url, openInNewTab },
     left_section[]{ ..., image{ asset->{url}, alt } },
-    right_section[]{ ..., image{ asset->{url}, alt } }
+    right_section[]{ ..., image{ asset->{url}, alt } },
+
+    items[]{
+    ...,
+    icon{ asset->{url} }
+   }
   }
 }`;
 
-function LandingPageDetail() {
+function ServicesPageDetail() {
   let { slug } = useParams();
   const navigate = useNavigate();
 
-  if (!slug) slug = "home";
+  if (!slug) slug = "services"; // default fallback
 
   const [initialData, setInitialData] = useState(null);
   const [loadingInitial, setLoadingInitial] = useState(true);
@@ -43,40 +49,35 @@ function LandingPageDetail() {
   useEffect(() => {
     let cancelled = false;
 
-    const fetchLandingPage = async () => {
-      const data = await client.fetch(landingPageQuery, { slug });
+    const fetchPage = async () => {
+      const data = await client.fetch(servicesPageQuery, { slug });
       if (cancelled) return;
       setInitialData(data);
       setLoadingInitial(false);
     };
 
-    fetchLandingPage().catch(() => {
+    fetchPage().catch(() => {
       if (!cancelled) {
         setInitialData(null);
         setLoadingInitial(false);
       }
     });
 
-    const interval = setInterval(() => {
-      fetchLandingPage().catch(() => {});
-    }, 5000);
-
     return () => {
       cancelled = true;
-      clearInterval(interval);
     };
   }, [slug]);
 
-  const [page, loadingLive] = useLiveQuery(initialData, landingPageQuery, { slug });
+  const [page, loadingLive] = useLiveQuery(initialData, servicesPageQuery, { slug });
   const loading = loadingInitial || loadingLive;
 
-  if (loading) return <div className="loading">Loading page...</div>;
+  if (loading) return <div>Loading...</div>;
 
   if (!page) {
     return (
-      <div className="error">
-        <p>Landing page not found</p>
-        <button onClick={() => navigate("/")}>Back to Home</button>
+      <div>
+        <p>Services page not found</p>
+        <button onClick={() => navigate("/")}>Back</button>
       </div>
     );
   }
@@ -97,8 +98,14 @@ function LandingPageDetail() {
       case "SpotlightContentService":
         return <SpotlightContentService key={key} {...component} />;
 
+      case "accordionGroup": // ✅ FIXED
+        return <AccordionGroup key={key} {...component} />;
+
       case "TwoColumn":
         return <TwoColumn key={key} {...component} />;
+
+      case "topicsSection":
+        return <TopicsSection key={key} {...component} />;
 
       default:
         return null;
@@ -106,14 +113,14 @@ function LandingPageDetail() {
   };
 
   return (
-    <div className="page-detail-container landingpage">
+    <div className="page-detail-container services">
       <article className="page-detail">
         <div className="page-content">
-          {page.components?.map((component, index) => renderComponent(component, index))}
+          {page.components?.map((comp, i) => renderComponent(comp, i))}
         </div>
       </article>
     </div>
   );
 }
 
-export default LandingPageDetail;
+export default ServicesPageDetail;
