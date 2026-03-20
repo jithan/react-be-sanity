@@ -6,53 +6,43 @@ import './Header.css';
 function Header() {
   const [menuItems, setMenuItems] = useState([]);
   const [megaMenu, setMegaMenu] = useState(null);
-  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [mobilePane, setMobilePane] = useState('main');
 
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const [menuItemsData, megaMenuData, servicesData] = await Promise.all([
+        const [menuItemsData, megaMenuData] = await Promise.all([
           client.fetch(`
-    *[_type == "page" && showInHeaderMenu == true] | order(menuOrder asc, title asc) {
-      _id,
-      title,
-      slug,
-      menuTitle
-    }
-  `),
+            *[_type == "page" && showInHeaderMenu == true] | order(menuOrder asc, title asc) {
+              _id,
+              title,
+              slug,
+              menuTitle
+            }
+          `),
 
           client.fetch(`
-    *[_type == "megaMenu"][0] {
-      title,
-      columns[] {
-        title,
-        links[] {
-          icon,
-          title,
-          description,
-          "href": coalesce(link->slug.current, ""),
-          "linkType": link->_type
-        }
-      }
-    }
-  `),
-
-          // 🔥 NEW: Services
-          client.fetch(`
-    *[_type == "Services"] | order(title asc) {
-      _id,
-      title,
-      slug
-    }
-  `),
+            *[_type == "megaMenu"][0] {
+              title,
+              columns[] {
+                title,
+                links[] {
+                  icon,
+                  title,
+                  description,
+                  "href": coalesce(link->slug.current, ""),
+                  "linkType": link->_type
+                }
+              }
+            }
+          `),
         ]);
 
         setMenuItems(menuItemsData);
         setMegaMenu(megaMenuData);
-        setServices(servicesData);
       } catch (err) {
         console.error('Error fetching menu data:', err);
       } finally {
@@ -62,8 +52,6 @@ function Header() {
 
     fetchMenu();
   }, []);
-
-  const [mobilePane, setMobilePane] = useState('main');
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -80,37 +68,8 @@ function Header() {
   };
 
   const toggleMegaMenu = () => {
-    setIsMegaMenuOpen(!isMegaMenuOpen);
+    setIsMegaMenuOpen((prev) => !prev);
   };
-
-  const megaMenuSections = [
-    {
-      heading: 'Genres',
-      links: [
-        { label: 'Action', to: '/movies/genre/action' },
-        { label: 'Comedy', to: '/movies/genre/comedy' },
-        { label: 'Drama', to: '/movies/genre/drama' },
-        { label: 'Horror', to: '/movies/genre/horror' },
-      ],
-    },
-    {
-      heading: 'Years',
-      links: [
-        { label: '2023', to: '/movies/year/2023' },
-        { label: '2022', to: '/movies/year/2022' },
-        { label: '2021', to: '/movies/year/2021' },
-        { label: '2020', to: '/movies/year/2020' },
-      ],
-    },
-    {
-      heading: 'Popular',
-      links: [
-        { label: 'Top Rated', to: '/movies/popular/top-rated' },
-        { label: 'New Releases', to: '/movies/popular/new-releases' },
-        { label: 'Classics', to: '/movies/popular/classics' },
-      ],
-    },
-  ];
 
   return (
     <nav className="navbar">
@@ -120,14 +79,20 @@ function Header() {
         </Link>
 
         <div className={`nav-menu-container ${isMobileMenuOpen ? 'open' : ''}`}>
+          
+          {/* DESKTOP */}
           <div className="desktop-nav">
             <ul className="nav-menu">
               {!loading &&
-                (menuItems || []).map((item) => (
+                menuItems.map((item) => (
                   <li key={item._id}>
-                    <Link to={`/pages/${item.slug.current}`}>{item.menuTitle || item.title}</Link>
+                    <Link to={`/pages/${item.slug?.current}`}>
+                      {item.menuTitle || item.title}
+                    </Link>
                   </li>
                 ))}
+
+              {/* MEGA MENU */}
               <li
                 className="mega-menu-item"
                 onMouseEnter={() => setIsMegaMenuOpen(true)}
@@ -144,50 +109,69 @@ function Header() {
                 >
                   {megaMenu?.title || 'Menu'}
                 </button>
+
                 {isMegaMenuOpen && megaMenu?.columns && (
                   <div className="mega-menu">
                     <div className="mega-menu-inner">
+                      
                       <div className="mega-menu-intro">
-                        <h3>{megaMenu?.title || 'Menu'}</h3>
+                        <h3>{megaMenu.title}</h3>
                         <p>Select a section below to browse.</p>
                       </div>
+
                       {megaMenu.columns.map((column) => (
                         <div key={column.title} className="mega-menu-section">
                           <h4>{column.title}</h4>
                           <ul>
                             {(column.links || []).map((link) => (
                               <li key={`${column.title}-${link.href || link.title}`}>
-                                <Link to={link.href || '#'}>{link.title}</Link>
+                                <Link to={link.href || '#'}>
+                                  {link.title}
+                                </Link>
                               </li>
                             ))}
                           </ul>
                         </div>
                       ))}
+
                     </div>
                   </div>
                 )}
               </li>
+
               <li>
                 <Link to="/articles">Articles</Link>
               </li>
             </ul>
           </div>
 
+          {/* MOBILE */}
           <div className="mobile-nav">
             <div
               className="mobile-menu-slider"
-              style={{ transform: mobilePane === 'main' ? 'translateX(0)' : 'translateX(-100%)' }}
+              style={{
+                transform:
+                  mobilePane === 'main'
+                    ? 'translateX(0)'
+                    : 'translateX(-100%)',
+              }}
             >
+              
+              {/* MAIN PANEL */}
               <div className="mobile-menu-panel">
                 <ul className="mobile-menu-list">
                   {!loading &&
-                    (menuItems || []).map((item) => (
+                    menuItems.map((item) => (
                       <li key={item._id}>
-                        <Link to={`/pages/${item.slug.current}`} onClick={closeMobileMenu}>
+                        <Link
+                          to={`/pages/${item.slug?.current}`}
+                          onClick={closeMobileMenu}
+                        >
                           {item.menuTitle || item.title}
                         </Link>
                       </li>
                     ))}
+
                   <li>
                     <button
                       className="mobile-submenu-button"
@@ -196,6 +180,7 @@ function Header() {
                       {megaMenu?.title || 'Menu'}
                     </button>
                   </li>
+
                   <li>
                     <Link to="/articles" onClick={closeMobileMenu}>
                       Articles
@@ -204,13 +189,18 @@ function Header() {
                 </ul>
               </div>
 
+              {/* MEGA PANEL */}
               <div className="mobile-menu-panel">
                 <div className="mobile-submenu-header">
-                  <button className="mobile-back" onClick={() => setMobilePane('main')}>
+                  <button
+                    className="mobile-back"
+                    onClick={() => setMobilePane('main')}
+                  >
                     ← Back
                   </button>
                   <h3>{megaMenu?.title || 'Menu'}</h3>
                 </div>
+
                 <div className="mobile-submenu-sections">
                   {(megaMenu?.columns || []).map((section) => (
                     <div key={section.title} className="mobile-submenu-section">
@@ -218,7 +208,10 @@ function Header() {
                       <ul>
                         {(section.links || []).map((link) => (
                           <li key={`${section.title}-${link.href || link.title}`}>
-                            <Link to={link.href || '#'} onClick={closeMobileMenu}>
+                            <Link
+                              to={link.href || '#'}
+                              onClick={closeMobileMenu}
+                            >
                               {link.title}
                             </Link>
                           </li>
@@ -228,10 +221,12 @@ function Header() {
                   ))}
                 </div>
               </div>
+
             </div>
           </div>
         </div>
 
+        {/* HAMBURGER */}
         <button className="hamburger" onClick={toggleMobileMenu}>
           <span></span>
           <span></span>

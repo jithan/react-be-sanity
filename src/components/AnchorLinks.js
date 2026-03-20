@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "../styles/AnchorLinks.css";
 
 const AnchorLinks = ({ items }) => {
-  const safeItems = Array.isArray(items) ? items : [];
+  // ✅ FIX: memoize safeItems
+  const safeItems = useMemo(() => {
+    return Array.isArray(items) ? items : [];
+  }, [items]);
+
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    // If a hash is present on load, try to activate the matching item
     const hash = window.location.hash;
     if (!hash) return;
 
-    const foundIndex = safeItems.findIndex((item) => item.componentId === hash);
+    const foundIndex = safeItems.findIndex(
+      (item) => item.componentId === hash
+    );
+
     if (foundIndex !== -1) {
       setActiveIndex(foundIndex);
     }
@@ -20,9 +26,12 @@ const AnchorLinks = ({ items }) => {
 
   const scrollToSection = (componentId, index) => {
     const element = document.querySelector(componentId);
+
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
       setActiveIndex(index);
+
+      // ✅ update URL hash cleanly
       window.history.replaceState(null, "", componentId);
     }
   };
@@ -30,10 +39,12 @@ const AnchorLinks = ({ items }) => {
   return (
     <nav className="anchor-links">
       <div className="anchor-links-container">
-        {items.map((item, index) => (
+        {safeItems.map((item, index) => (
           <button
-            key={index}
-            className={`anchor-link-item ${index === activeIndex ? "active" : ""}`}
+            key={item.componentId || index} // ✅ better key
+            className={`anchor-link-item ${
+              index === activeIndex ? "active" : ""
+            }`}
             onClick={() => scrollToSection(item.componentId, index)}
             type="button"
           >
