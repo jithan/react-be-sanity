@@ -10,6 +10,7 @@ import SpotlightContentService from "../components/SpotlightContentService";
 import TwoColumn from "../components/TwoColumn";
 import TopicsSection from "../components/TopicsSection";
 import AccordionGroup from "../components/AccordionGroup";
+import SearchBlock from "../components/SearchBlock";
 import "./PageDetail.css";
 
 const servicesPageQuery = `*[_type == "Services" && slug.current == $slug][0]{
@@ -98,11 +99,13 @@ function ServicesPageDetail() {
       case "SpotlightContentService":
         return <SpotlightContentService key={key} {...component} />;
 
-      case "accordionGroup": // ✅ FIXED
+      case "accordionGroup":
         return <AccordionGroup key={key} {...component} />;
 
       case "TwoColumn":
         return <TwoColumn key={key} {...component} />;
+      case "searchBlock":
+        return <SearchBlock key={index} {...component} />;
 
       case "topicsSection":
         return <TopicsSection key={key} {...component} />;
