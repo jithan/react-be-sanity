@@ -162,3 +162,23 @@ max-width: 100%;
     max-width: 300px;
   }
 }
+.services-layout {
+  display: flex;
+  gap: 30px;
+}
+
+.services-content {
+  flex: 1;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .services-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: relative;
+  }
+}

@@ -11,6 +11,7 @@ import TwoColumn from "../components/TwoColumn";
 import TopicsSection from "../components/TopicsSection";
 import AccordionGroup from "../components/AccordionGroup";
 import SearchBlock from "../components/SearchBlock";
+import Sidebar from "../components/Sidebar";
 import "./PageDetail.css";
 
 const servicesPageQuery = `*[_type == "Services" && slug.current == $slug][0]{
@@ -115,15 +116,19 @@ function ServicesPageDetail() {
     }
   };
 
-  return (
-    <div className="page-detail-container services">
-      <article className="page-detail">
-        <div className="page-content">
-          {page.components?.map((comp, i) => renderComponent(comp, i))}
-        </div>
-      </article>
+return (
+  <div className="services-layout">
+
+    {/* LEFT SIDEBAR */}
+    <Sidebar />
+
+    {/* RIGHT CONTENT */}
+    <div className="services-content">
+      {page.components?.map((comp, i) => renderComponent(comp, i))}
     </div>
-  );
+
+  </div>
+);
 }
 
 export default ServicesPageDetail;

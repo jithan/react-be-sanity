@@ -40,3 +40,91 @@
   max-height: 200px;
   padding: 15px;
 }
+
+
+/* ---- Accordion Wrapper ---- */
+.accordion-group {
+  max-width: 720px;
+  margin: 40px auto;
+  border: 1px solid #E2E4EA;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+/* ---- Individual Accordion Items ---- */
+.accordion-item {
+  border-top: 1px solid #E2E4EA;
+}
+
+.accordion-item:first-child {
+  border-top: none;
+}
+
+/* ---- Accordion Header Button ---- */
+.accordion-header {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.accordion-header:hover {
+  background: #F9FAFB;
+}
+
+/* ---- Left Section: Icon + Title ---- */
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.accordion-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.accordion-title span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0A1A44;
+}
+
+/* ---- Right Toggle ---- */
+.accordion-toggle {
+  font-size: 20px;
+  color: #0A1A44;
+  transition: transform 0.25s ease;
+}
+
+.accordion-item.open .accordion-toggle {
+  transform: rotate(45deg);  /* turns + into × */
+}
+
+/* ---- Accordion Content ---- */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 24px;
+}
+
+.accordion-item.open .accordion-content {
+  padding: 16px 24px 20px;
+  max-height: 300px;  /* adjust based on content */
+}
+
+.accordion-content p {
+  margin: 0;
+  color: #394056;
+  line-height: 1.6;
+  font-size: 15px;
+}

@@ -94,3 +94,73 @@
   color: inherit;
   border-bottom: 2px solid;
 }
+
+
+
+/* Card Panel CSS */
+
+
+.topics-section {
+  padding: 60px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.topics-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #0A1A44; 
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.topic-card {
+  border: 1px solid #E2E4EA;   
+  border-radius: 12px;
+  padding: 28px;
+  background: #fff;
+  transition: box-shadow 0.2s ease;
+}
+
+.topic-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.topic-card img {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+.topic-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0A1A44;
+  margin-bottom: 10px;
+}
+
+.topic-card p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #394056;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .topics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+}
