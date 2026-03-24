@@ -70,6 +70,19 @@ const TwoColumn = ({
           return <CustomImage key={index} {...item} />;
         case 'HTMLBlock':
           return <HTMLBlock key={index} {...item} />;
+        case 'link': // ✅ ADD THIS
+          return (
+            <a
+              key={index}
+              href={item.url}
+              target={item.openInNewTab ? "_blank" : "_self"}
+              rel="noopener noreferrer"
+              className="cta-button"
+            >
+              {item.label}
+            </a>
+          );
+
         default:
           return null;
       }

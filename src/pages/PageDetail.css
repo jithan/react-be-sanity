@@ -2,7 +2,11 @@
   max-width: 2400px;
     margin: 0 auto;
 }
-
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* ✅ FIX double scrollbar */
+}
 .page-detail-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -162,23 +166,76 @@ max-width: 100%;
     max-width: 300px;
   }
 }
+/* 🔥 Layout */
 .services-layout {
   display: flex;
-  gap: 30px;
 }
 
+/* 🔥 Fixed Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+
+  display: flex;              /* ✅ FIX */
+  flex-direction: column;     /* ✅ FIX */
+
+  background: #ffffff;
+  border-right: 1px solid #eee;
+  z-index: 1000;
+
+  overflow: hidden; /* ✅ prevents double scroll */
+}
+
+/* ✅ Scroll only menu area */
+.sidebar-menu {
+  flex: 1;                  /* ✅ FIX */
+  overflow-y: auto;         /* ✅ FIX */
+  list-style: none;
+  padding: 20px;
+}
+
+/* Footer fix */
+.sidebar-footer {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+
+/* 👉 Right Content */
 .services-content {
-  flex: 1;
+  margin-left: 300px;
+  width: calc(100% - 300px);
+  height: 100vh;
+  overflow-y: auto;   /* ✅ only this scrolls */
+  padding: 20px;
+  scroll-behavior: smooth;
 }
-
-/* Mobile */
 @media (max-width: 768px) {
+  html, body {
+    overflow: auto; /* allow scroll on mobile */
+  }
+
   .services-layout {
     flex-direction: column;
   }
 
   .sidebar {
-    width: 100%;
     position: relative;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar-menu {
+    overflow: visible;
+  }
+
+  .services-content {
+    margin-left: 0;
+    width: 100%;
+    height: auto;
   }
 }
