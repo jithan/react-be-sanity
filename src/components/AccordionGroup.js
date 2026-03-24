@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { PortableText } from "@portabletext/react"; // ✅ import this
 import "../styles/AccordionGroup.css";
 
 function AccordionGroup({ items = [] }) {
@@ -11,11 +12,17 @@ function AccordionGroup({ items = [] }) {
   return (
     <section className="accordion-group">
       {items.map((item, index) => (
-        <div className="accordion-item" key={item.componentId || index} id={item.componentId}>
+        <div
+          className="accordion-item"
+          key={item.componentId || index}
+          id={item.componentId}
+        >
           
           {/* Header */}
           <button
-            className={`accordion-header ${activeIndex === index ? "active" : ""}`}
+            className={`accordion-header ${
+              activeIndex === index ? "active" : ""
+            }`}
             onClick={() => toggleItem(index)}
           >
             <div className="accordion-title">
@@ -40,7 +47,12 @@ function AccordionGroup({ items = [] }) {
               activeIndex === index ? "open" : ""
             }`}
           >
-            <p>{item.description}</p>
+            {/* ✅ FIX HERE */}
+            {typeof item.description === "string" ? (
+              <p>{item.description}</p> // fallback for old data
+            ) : (
+              <PortableText value={item.description} />
+            )}
           </div>
         </div>
       ))}

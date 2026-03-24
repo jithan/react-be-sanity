@@ -23,7 +23,7 @@
 .anchor-link-item {
     background: rgba(255, 255, 255, 0.75);
     border: none;
-    color: #0b2c6b;
+    color: #0d1523;
     padding: 10px 26px;
     border-radius: 999px;
     font-weight: 600;
@@ -41,7 +41,7 @@
 }
 
 .anchor-link-item.active {
-    background: #0b2c6b;
+    background: #19315e;
     color: #fff;
     box-shadow: 0 12px 18px rgba(0, 0, 0, 0.18);
 }

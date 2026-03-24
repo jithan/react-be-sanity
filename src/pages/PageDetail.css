@@ -5,7 +5,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden; /* ✅ FIX double scrollbar */
+
 }
 .page-detail-container {
   max-width: 1200px;
@@ -207,8 +207,7 @@ box-sizing: border-box;
 .services-content {
   margin-left: 300px;
   width: calc(100% - 300px);
-  height: 100vh;
-  overflow-y: auto;   /* ✅ only this scrolls */
+  height: 100vh;   /* ✅ only this scrolls */
   padding: 20px;
   scroll-behavior: smooth;
 }
