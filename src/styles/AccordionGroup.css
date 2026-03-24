@@ -1,6 +1,6 @@
 .accordion-group {
   width: 100%;
-  margin: 40px 0;
+  margin: 20px auto 40px;
 }
 
 .accordion-item {
@@ -16,6 +16,11 @@
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+}
+.main-container {
+  background: #f5f5f5;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .accordion-title {
@@ -38,17 +43,16 @@
 
 .accordion-content.open {
   max-height: 200px;
-  padding: 15px;
+  padding:10px 24px;
 }
 
 
 /* ---- Accordion Wrapper ---- */
 .accordion-group {
   max-width: 720px;
-  margin: 40px auto;
   border: 1px solid #E2E4EA;
   border-radius: 12px;
-  background: #fff;
+  background: #f5f5f5;
   overflow: hidden;
   font-family: "Inter", Arial, sans-serif;
 }

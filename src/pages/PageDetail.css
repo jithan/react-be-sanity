@@ -185,8 +185,8 @@ max-width: 100%;
   background: #ffffff;
   border-right: 1px solid #eee;
   z-index: 1000;
-
-  overflow: hidden; /* ✅ prevents double scroll */
+box-sizing: border-box;
+  overflow: auto; /* ✅ prevents double scroll */
 }
 
 /* ✅ Scroll only menu area */
@@ -199,7 +199,6 @@ max-width: 100%;
 
 /* Footer fix */
 .sidebar-footer {
-  padding: 15px;
   border-top: 1px solid #eee;
   background: #fff;
 }
