@@ -1,73 +1,76 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Home, Grid, PenTool, Folder, Upload, BarChart2, Clock, Settings } from "lucide-react";
+import { client } from "../sanityClient";
+import { iconMap } from "../icons";
 import "../styles/Sidebar.css";
 
+const sidebarQuery = `*[_type == "sidebar"][0]{
+  title,
+  sections[]{
+    heading,
+    links[]{
+      label,
+      url,
+      icon
+    }
+  },
+   footerLinks[]{
+    label,
+    url,
+    icon
+  }
+}`;
+
 function Sidebar() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    client.fetch(sidebarQuery).then((res) => {
+      setData(res);
+    });
+  }, []);
+
+  if (!data) return <div>Loading...</div>;
+
   return (
     <aside className="sidebar">
 
       {/* LOGO */}
       <div className="sidebar-header">
         <div className="logo-box"></div>
-        <h2>Untitled UI</h2>
+        <h2>{data.title}</h2>
       </div>
 
-      {/* DASHBOARD */}
-      <div className="sidebar-section">
-        <p className="sidebar-heading">DASHBOARD</p>
+      {/* SECTIONS */}
+      {data.sections?.map((section, i) => (
+        <div className="sidebar-section" key={i}>
+          <p className="sidebar-heading">{section.heading}</p>
 
-        <Link to="#" className="sidebar-item">
-          <Home size={18} />
-          <span>Overview</span>
-        </Link>
+          {section.links?.map((link, j) => {
+            const Icon = iconMap[link.icon];
 
-        <Link to="#" className="sidebar-item">
-          <Grid size={18} />
-          <span>Current projects</span>
-        </Link>
-      </div>
+            return (
+              <Link to={link.url || "#"} key={j} className="sidebar-item">
+                {Icon && <Icon size={18} />}
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      ))}
 
-      {/* EDITOR */}
-      <div className="sidebar-section">
-        <p className="sidebar-heading">EDITOR</p>
-
-        <Link to="#" className="sidebar-item">
-          <PenTool size={18} />
-          <span>Designer</span>
-        </Link>
-
-        <Link to="#" className="sidebar-item">
-          <Folder size={18} />
-          <span>Current projects</span>
-        </Link>
-
-        <Link to="#" className="sidebar-item">
-          <Upload size={18} />
-          <span>Upload new</span>
-        </Link>
-      </div>
-
-      {/* REPORTS */}
-      <div className="sidebar-section">
-        <p className="sidebar-heading">REPORTS</p>
-
-        <Link to="#" className="sidebar-item">
-          <BarChart2 size={18} />
-          <span>Overview</span>
-        </Link>
-
-        <Link to="#" className="sidebar-item">
-          <Clock size={18} />
-          <span>Scheduled reports</span>
-        </Link>
-      </div>
-
-      {/* SETTINGS */}
+      {/* SETTINGS (optional fixed bottom) */}
       <div className="sidebar-footer">
-        <Link to="#" className="sidebar-item settings">
-          <Settings size={18} />
-          <span>Settings</span>
-        </Link>
+        {data.footerLinks?.map((link, i) => {
+          const Icon = iconMap[link.icon];
+
+          return (
+            <Link to={link.url || "#"} key={i} className="sidebar-item settings">
+              {Icon && <Icon size={18} />}
+              <span>{link.label}</span>
+            </Link>
+          );
+        })}
       </div>
 
     </aside>
