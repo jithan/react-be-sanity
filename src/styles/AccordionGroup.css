@@ -1,6 +1,6 @@
 .accordion-group {
   width: 100%;
-  margin: 20px auto 40px;
+  margin: 40px 0;
 }
 
 .accordion-item {
@@ -50,6 +50,7 @@
 /* ---- Accordion Wrapper ---- */
 .accordion-group {
   max-width: 720px;
+  margin: 0px auto 30px;
   border: 1px solid #E2E4EA;
   border-radius: 12px;
   background: #f5f5f5;

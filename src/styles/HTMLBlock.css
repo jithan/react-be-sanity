@@ -35,9 +35,7 @@
 .html-block-content strong {
  color: #15223a;
 }
-.html-block-content p:first-child {
-  margin-top: 0px;
-}
+
 .html-block-content ul,
 .html-block-content ol {
   margin-bottom: 15px;

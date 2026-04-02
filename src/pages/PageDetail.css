@@ -169,6 +169,8 @@ max-width: 100%;
 /* 🔥 Layout */
 .services-layout {
   display: flex;
+  overflow: hidden;
+  height: 100vh;
 }
 
 /* 🔥 Fixed Sidebar */
@@ -206,10 +208,10 @@ box-sizing: border-box;
 /* 👉 Right Content */
 .services-content {
   margin-left: 300px;
-  width: calc(100% - 300px);
+  width: calc(100% - 280px);
   height: 100vh;   /* ✅ only this scrolls */
-  padding: 20px;
   scroll-behavior: smooth;
+  overflow: auto;
 }
 @media (max-width: 768px) {
   html, body {
@@ -236,4 +238,7 @@ box-sizing: border-box;
     width: 100%;
     height: auto;
   }
+}
+.lang-switcher {
+  display: none;
 }

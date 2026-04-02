@@ -6,7 +6,7 @@
 
 .two-column-container {
   display: flex;
-  gap: 40px;
+  gap: 60px;
   align-items: flex-start;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .pad-sm {
-  padding: 30px 20px;
+  padding: 35px 109px
 }
 
 .pad-md {

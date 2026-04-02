@@ -12,12 +12,18 @@ import TopicsSection from "../components/TopicsSection";
 import AccordionGroup from "../components/AccordionGroup";
 import SearchBlock from "../components/SearchBlock";
 import Sidebar from "../components/Sidebar";
+
 import "./PageDetail.css";
 
-const servicesPageQuery = `*[_type == "Services" && slug.current == $slug][0]{
+// ✅ Updated Query with language support
+const servicesPageQuery = `*[_type == "Services" 
+  && slug.current == $slug 
+  && language == $lang][0]{
   _id,
   title,
   slug,
+  language,
+  translationGroupId,
   publishedAt,
   excerpt,
   components[]{
@@ -31,19 +37,20 @@ const servicesPageQuery = `*[_type == "Services" && slug.current == $slug][0]{
     link{ label, url, openInNewTab },
     left_section[]{ ..., image{ asset->{url}, alt } },
     right_section[]{ ..., image{ asset->{url}, alt } },
-
     items[]{
-    ...,
-    icon{ asset->{url} }
-   }
+      ...,
+      icon{ asset->{url} }
+    }
   }
 }`;
 
 function ServicesPageDetail() {
-  let { slug } = useParams();
+  let { slug, lang } = useParams();
   const navigate = useNavigate();
 
-  if (!slug) slug = "services"; // default fallback
+  // ✅ Default fallback
+  if (!slug) slug = "services";
+  if (!lang) lang = "en";
 
   const [initialData, setInitialData] = useState(null);
   const [loadingInitial, setLoadingInitial] = useState(true);
@@ -52,25 +59,41 @@ function ServicesPageDetail() {
     let cancelled = false;
 
     const fetchPage = async () => {
-      const data = await client.fetch(servicesPageQuery, { slug });
-      if (cancelled) return;
-      setInitialData(data);
-      setLoadingInitial(false);
+      try {
+        const data = await client.fetch(servicesPageQuery, { slug, lang });
+
+        // 🔥 Fallback to English if translation missing
+        if (!data && lang !== "en") {
+          navigate(`/en/services/${slug}`);
+          return;
+        }
+
+        if (!cancelled) {
+          setInitialData(data);
+          setLoadingInitial(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setInitialData(null);
+          setLoadingInitial(false);
+        }
+      }
     };
 
-    fetchPage().catch(() => {
-      if (!cancelled) {
-        setInitialData(null);
-        setLoadingInitial(false);
-      }
-    });
+    fetchPage();
 
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, lang, navigate]);
 
-  const [page, loadingLive] = useLiveQuery(initialData, servicesPageQuery, { slug });
+  // ✅ Live preview support
+  const [page, loadingLive] = useLiveQuery(
+    initialData,
+    servicesPageQuery,
+    { slug, lang }
+  );
+
   const loading = loadingInitial || loadingLive;
 
   if (loading) return <div>Loading...</div>;
@@ -84,6 +107,12 @@ function ServicesPageDetail() {
     );
   }
 
+  // 🔁 Language Switch
+  const changeLanguage = (newLang) => {
+    navigate(`/${newLang}/services/${slug}`);
+  };
+
+  // 🔧 Component Renderer
   const renderComponent = (component, index) => {
     const key = component?._key || `${component?._type}-${index}`;
 
@@ -105,8 +134,9 @@ function ServicesPageDetail() {
 
       case "TwoColumn":
         return <TwoColumn key={key} {...component} />;
+
       case "searchBlock":
-        return <SearchBlock key={index} {...component} />;
+        return <SearchBlock key={key} {...component} />;
 
       case "topicsSection":
         return <TopicsSection key={key} {...component} />;
@@ -116,19 +146,26 @@ function ServicesPageDetail() {
     }
   };
 
-return (
-  <div className="services-layout">
+  return (
+    <div className="services-layout">
 
-    {/* LEFT SIDEBAR */}
-    <Sidebar />
+      {/* 🌐 Language Switcher */}
+      <div className="lang-switcher">
+        <button onClick={() => changeLanguage("en")}>EN</button>
+        <button onClick={() => changeLanguage("ta")}>TA</button>
+        <button onClick={() => changeLanguage("hi")}>HI</button>
+      </div>
 
-    {/* RIGHT CONTENT */}
-    <div className="services-content">
-      {page.components?.map((comp, i) => renderComponent(comp, i))}
+      {/* LEFT SIDEBAR */}
+      <Sidebar currentLang={lang} />
+
+      {/* RIGHT CONTENT */}
+      <div className="services-content">
+        {page.components?.map((comp, i) => renderComponent(comp, i))}
+      </div>
+
     </div>
-
-  </div>
-);
+  );
 }
 
 export default ServicesPageDetail;
