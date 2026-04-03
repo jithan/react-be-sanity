@@ -17,7 +17,7 @@ const FeaturesSection = ({ title, subtitle, features = [], columns = 3 }) => {
         .replace(/^image-/, '')
         .replace(/-([a-z]+)$/, '.$1');
 
-      return `https://cdn.sanity.io/images/4p1xt2z5/rlthub/${cleaned}`;
+      return `https://cdn.sanity.io/images/lyl5ivou/production/${cleaned}`;
     }
 
     return '';
