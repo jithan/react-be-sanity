@@ -1,0 +1,10 @@
+{"_type":"article","_id":"article-1","title":"Getting Started with Sanity","slug":{"_type":"slug","current":"getting-started-sanity"},"description":"Learn how to set up Sanity CMS.","publishedAt":"2026-01-01T10:00:00Z"}
+{"_type":"article","_id":"article-2","title":"React + Sanity Guide","slug":{"_type":"slug","current":"react-sanity-guide"},"description":"Integrate React with Sanity easily.","publishedAt":"2026-01-02T10:00:00Z"}
+{"_type":"article","_id":"article-3","title":"Headless CMS Explained","slug":{"_type":"slug","current":"headless-cms-explained"},"description":"What is a headless CMS?","publishedAt":"2026-01-03T10:00:00Z"}
+{"_type":"article","_id":"article-4","title":"Using GROQ Queries","slug":{"_type":"slug","current":"groq-queries"},"description":"Fetch data using GROQ.","publishedAt":"2026-01-04T10:00:00Z"}
+{"_type":"article","_id":"article-5","title":"Sanity Image Handling","slug":{"_type":"slug","current":"sanity-images"},"description":"Work with images in Sanity.","publishedAt":"2026-01-05T10:00:00Z"}
+{"_type":"article","_id":"article-6","title":"Deploy Sanity Studio","slug":{"_type":"slug","current":"deploy-sanity"},"description":"Deploy your studio easily.","publishedAt":"2026-01-06T10:00:00Z"}
+{"_type":"article","_id":"article-7","title":"Sanity Schemas Basics","slug":{"_type":"slug","current":"sanity-schemas"},"description":"Create schemas in Sanity.","publishedAt":"2026-01-07T10:00:00Z"}
+{"_type":"article","_id":"article-8","title":"Portable Text Guide","slug":{"_type":"slug","current":"portable-text"},"description":"Use rich text in Sanity.","publishedAt":"2026-01-08T10:00:00Z"}
+{"_type":"article","_id":"article-9","title":"Sanity Webhooks","slug":{"_type":"slug","current":"sanity-webhooks"},"description":"Trigger builds using webhooks.","publishedAt":"2026-01-09T10:00:00Z"}
+{"_type":"article","_id":"article-10","title":"Scaling with Sanity","slug":{"_type":"slug","current":"scaling-sanity"},"description":"Scale your CMS project.","publishedAt":"2026-01-10T10:00:00Z"}
