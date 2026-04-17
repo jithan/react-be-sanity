@@ -8,10 +8,16 @@ import AnchorLinks from "../components/AnchorLinks";
 import FullwidthImage from "../components/FullwidthImage";
 import SpotlightContentService from "../components/SpotlightContentService";
 import TwoColumn from "../components/TwoColumn";
+import Features from "../components/Features";
+import ContactCallout from "../components/ContactCallout"; // ✅ ADDED
 
 import "./PageDetail.css";
 
-const landingPageQuery = `*[_type == "Landingpage" && slug.current == $slug][0]{
+const landingPageQuery = `*[
+  _type == "landingpage" &&
+  slug.current == $slug &&
+  isPublished == true
+][0]{
   _id,
   title,
   slug,
@@ -21,10 +27,8 @@ const landingPageQuery = `*[_type == "Landingpage" && slug.current == $slug][0]{
     ...,
     field_link{ label, url, openInNewTab },
     image_field{ asset->{url}, alt },
-    logo_service_pillar_sm{ asset->{url}, alt },
     image_full_width{ asset->{url}, alt },
     image{ asset->{url}, alt },
-    logo_or_service_pillar{ asset->{url}, alt },
     link{ label, url, openInNewTab },
     left_section[]{ ..., image{ asset->{url}, alt } },
     right_section[]{ ..., image{ asset->{url}, alt } }
@@ -46,6 +50,7 @@ function LandingPageDetail() {
     const fetchLandingPage = async () => {
       const data = await client.fetch(landingPageQuery, { slug });
       if (cancelled) return;
+
       setInitialData(data);
       setLoadingInitial(false);
     };
@@ -67,8 +72,19 @@ function LandingPageDetail() {
     };
   }, [slug]);
 
-  const [page, loadingLive] = useLiveQuery(initialData, landingPageQuery, { slug });
+  const [page, loadingLive] = useLiveQuery(
+    initialData,
+    landingPageQuery,
+    { slug }
+  );
+
   const loading = loadingInitial || loadingLive;
+
+  useEffect(() => {
+    if (page?.title) {
+      document.title = page.title;
+    }
+  }, [page]);
 
   if (loading) return <div className="loading">Loading page...</div>;
 
@@ -81,6 +97,7 @@ function LandingPageDetail() {
     );
   }
 
+  // ✅ COMPONENT RENDERER (ALL FIXED)
   const renderComponent = (component, index) => {
     const key = component?._key || `${component?._type}-${index}`;
 
@@ -100,6 +117,12 @@ function LandingPageDetail() {
       case "TwoColumn":
         return <TwoColumn key={key} {...component} />;
 
+      case "features":
+        return <Features key={key} {...component} />;
+
+      case "contactCallout": // ✅ FIXED
+        return <ContactCallout key={key} {...component} />;
+
       default:
         return null;
     }
@@ -109,7 +132,9 @@ function LandingPageDetail() {
     <div className="page-detail-container landingpage">
       <article className="page-detail">
         <div className="page-content">
-          {page.components?.map((component, index) => renderComponent(component, index))}
+          {page.components?.map((component, index) =>
+            renderComponent(component, index)
+          )}
         </div>
       </article>
     </div>

@@ -33,7 +33,7 @@ function Header() {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-brand">
-          Lorum Ipsum
+         MediProtect
         </Link>
         <ul className="nav-menu">
            {!loading &&

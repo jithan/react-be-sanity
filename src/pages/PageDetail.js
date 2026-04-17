@@ -19,6 +19,7 @@ const pageQuery = `*[_type == "page" && slug.current == $slug][0]{
   _id,
   title,
   slug,
+  showPageTitle,
   content,
   seo{
     metaTitle,
@@ -130,10 +131,10 @@ function PageDetail() {
   return (
     <div className="page-detail-container">
       <article className="page-detail">
-
-        <header className="page-header">
+        {page.showPageTitle && <header className="page-header">
           <h1>{page.title}</h1>
-        </header>
+        </header>}
+
 
         <div className="page-content">
 

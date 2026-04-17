@@ -50,7 +50,11 @@ function ServicesPageDetail() {
     pageQuery,
     { slug, fullLang }
   );
-
+useEffect(() => {
+  if (page?.title) {
+    document.title = page.title;
+  }
+}, [page]);
   // ✅ Detect route change (language switch / slug change)
   useEffect(() => {
     setIsNavigating(true);

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { client } from '../sanityClient';
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import './Header.css';
 
 function Header() {
-  const { lang = "en" } = useParams(); // 🌐 CURRENT LANGUAGE
 
   const [menuItems, setMenuItems] = useState([]);
   const [megaMenu, setMegaMenu] = useState(null);
@@ -18,13 +17,19 @@ function Header() {
     const fetchMenu = async () => {
       try {
         const [menuItemsData, megaMenuData] = await Promise.all([
+
+          // ✅ FIXED MENU QUERY (HOME INCLUDED)
           client.fetch(`
-            *[_type == "page" && showInHeaderMenu == true] 
+            *[
+              _type == "page" &&
+              showInHeaderMenu == true
+            ]
             | order(menuOrder asc, title asc) {
               _id,
               title,
               slug,
-              menuTitle
+              menuTitle,
+              languageIndependent
             }
           `),
 
@@ -37,10 +42,15 @@ function Header() {
                   icon,
                   title,
                   description,
-                  link->{
+                  linkType,
+
+                  internalLink->{
                     _type,
                     "slug": slug.current
-                  }
+                  },
+
+                  externalLink,
+                  target
                 }
               }
             }
@@ -49,8 +59,9 @@ function Header() {
 
         setMenuItems(menuItemsData);
         setMegaMenu(megaMenuData);
+
       } catch (err) {
-        console.error('Error fetching menu data:', err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -59,21 +70,47 @@ function Header() {
     fetchMenu();
   }, []);
 
-  // 🌐 CENTRAL ROUTING WITH LANGUAGE
-  const buildUrl = (link) => {
-    if (!link?.slug) return "#";
+  // ================= PAGE URL =================
+  const buildPageUrl = (item) => {
+    if (!item?.slug?.current) return "#";
 
-    const map = {
-      Services: "services",
-      Landingpage: "landing",
-      page: "pages",
-    };
+    const slug = item.slug.current;
 
-    const base = map[link._type] || "";
+    if (slug === "home") return "/";
 
-    return base
-      ? `/${lang}/${base}/${link.slug}`
-      : `/${lang}/${link.slug}`;
+    if (item.languageIndependent) {
+      return `/${slug}`;
+    }
+
+    return `/pages/${slug}`;
+  };
+
+  // ================= MEGA MENU URL =================
+  const buildMegaUrl = (item) => {
+    if (!item) return "#";
+
+    if (item.linkType === "internal") {
+      const slug = item.internalLink?.slug;
+      const type = item.internalLink?._type;
+
+      if (!slug) return "#";
+
+      const map = {
+        services: "services",
+        landingpage: "landing",
+        page: "pages",
+      };
+
+      const base = map[type] || "";
+
+      return base ? `/${base}/${slug}` : `/${slug}`;
+    }
+
+    if (item.linkType === "external") {
+      return item.externalLink || "#";
+    }
+
+    return "#";
   };
 
   const closeMobileMenu = () => {
@@ -82,25 +119,13 @@ function Header() {
     setIsMegaMenuOpen(false);
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => {
-      const next = !prev;
-      if (!next) setMobilePane('main');
-      return next;
-    });
-  };
-
-  const toggleMegaMenu = () => {
-    setIsMegaMenuOpen((prev) => !prev);
-  };
-
   return (
     <nav className="navbar">
       <div className="nav-container">
 
         {/* LOGO */}
-        <Link to={`/${lang}`} className="nav-brand">
-          Lorum Ipsum
+        <Link to="/" className="nav-brand">
+          LifeSecure
         </Link>
 
         <div className={`nav-menu-container ${isMobileMenuOpen ? 'open' : ''}`}>
@@ -109,11 +134,11 @@ function Header() {
           <div className="desktop-nav">
             <ul className="nav-menu">
 
-              {/* NORMAL MENU */}
+              {/* ✅ FIXED: NO FILTER REMOVAL */}
               {!loading &&
                 menuItems.map((item) => (
                   <li key={item._id}>
-                    <Link to={`/${lang}/pages/${item.slug?.current}`}>
+                    <Link to={buildPageUrl(item)}>
                       {item.menuTitle || item.title}
                     </Link>
                   </li>
@@ -127,11 +152,7 @@ function Header() {
               >
                 <button
                   className="mega-menu-trigger"
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleMegaMenu();
-                  }}
+                  onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
                 >
                   {megaMenu?.title || 'Menu'}
                 </button>
@@ -142,19 +163,31 @@ function Header() {
 
                       <div className="mega-menu-intro">
                         <h3>{megaMenu.title}</h3>
-                        <p>Select a section below to browse.</p>
+                        <p>Browse categories</p>
                       </div>
 
                       {megaMenu.columns.map((column) => (
                         <div key={column.title} className="mega-menu-section">
+
                           <h4>{column.title}</h4>
 
                           <ul>
-                            {(column.links || []).map((link) => (
-                              <li key={`${column.title}-${link.title}`}>
-                                <Link to={buildUrl(link.link)}>
-                                  {link.title}
-                                </Link>
+                            {(column.links || []).map((item) => (
+                              <li key={item.title}>
+
+                                {item.linkType === "external" ? (
+                                  <a
+                                    href={item.externalLink}
+                                    target={item.target || "_self"}
+                                  >
+                                    {item.title}
+                                  </a>
+                                ) : (
+                                  <Link to={buildMegaUrl(item)}>
+                                    {item.title}
+                                  </Link>
+                                )}
+
                               </li>
                             ))}
                           </ul>
@@ -167,17 +200,16 @@ function Header() {
                 )}
               </li>
 
-              {/* ARTICLES */}
               <li>
-                <Link to={`/${lang}/articles`}>Articles</Link>
+                <Link to="/articles">Articles</Link>
               </li>
 
             </ul>
-
           </div>
 
           {/* ================= MOBILE ================= */}
           <div className="mobile-nav">
+
             <div
               className="mobile-menu-slider"
               style={{
@@ -188,15 +220,16 @@ function Header() {
               }}
             >
 
-              {/* MAIN PANEL */}
+              {/* MAIN */}
               <div className="mobile-menu-panel">
+
                 <ul className="mobile-menu-list">
 
                   {!loading &&
                     menuItems.map((item) => (
                       <li key={item._id}>
                         <Link
-                          to={`/${lang}/pages/${item.slug?.current}`}
+                          to={buildPageUrl(item)}
                           onClick={closeMobileMenu}
                         >
                           {item.menuTitle || item.title}
@@ -205,61 +238,56 @@ function Header() {
                     ))}
 
                   <li>
-                    <button
-                      className="mobile-submenu-button"
-                      onClick={() => setMobilePane('mega')}
-                    >
+                    <button onClick={() => setMobilePane('mega')}>
                       {megaMenu?.title || 'Menu'}
                     </button>
                   </li>
 
                   <li>
-                    <Link to={`/${lang}/articles`} onClick={closeMobileMenu}>
+                    <Link to="/articles" onClick={closeMobileMenu}>
                       Articles
                     </Link>
                   </li>
 
                 </ul>
 
-                {/* 🌐 LANGUAGE SWITCH (MOBILE) */}
                 <LanguageSwitcher />
+
               </div>
 
-              {/* MEGA PANEL */}
+              {/* MEGA */}
               <div className="mobile-menu-panel">
 
-                <div className="mobile-submenu-header">
-                  <button
-                    className="mobile-back"
-                    onClick={() => setMobilePane('main')}
-                  >
-                    ← Back
-                  </button>
-                  <h3>{megaMenu?.title || 'Menu'}</h3>
-                </div>
+                <button onClick={() => setMobilePane('main')}>
+                  ← Back
+                </button>
 
-                <div className="mobile-submenu-sections">
-                  {(megaMenu?.columns || []).map((section) => (
-                    <div key={section.title} className="mobile-submenu-section">
+                <h3>{megaMenu?.title}</h3>
 
-                      <h4>{section.title}</h4>
+                {(megaMenu?.columns || []).map((section) => (
+                  <div key={section.title}>
+                    <h4>{section.title}</h4>
 
-                      <ul>
-                        {(section.links || []).map((link) => (
-                          <li key={`${section.title}-${link.title}`}>
-                            <Link
-                              to={buildUrl(link.link)}
-                              onClick={closeMobileMenu}
-                            >
-                              {link.title}
+                    <ul>
+                      {(section.links || []).map((item) => (
+                        <li key={item.title}>
+
+                          {item.linkType === "external" ? (
+                            <a href={item.externalLink}>
+                              {item.title}
+                            </a>
+                          ) : (
+                            <Link to={buildMegaUrl(item)}>
+                              {item.title}
                             </Link>
-                          </li>
-                        ))}
-                      </ul>
+                          )}
 
-                    </div>
-                  ))}
-                </div>
+                        </li>
+                      ))}
+                    </ul>
+
+                  </div>
+                ))}
 
               </div>
 
@@ -269,7 +297,10 @@ function Header() {
         </div>
 
         {/* HAMBURGER */}
-        <button className="hamburger" onClick={toggleMobileMenu}>
+        <button
+          className="hamburger"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
           <span></span>
           <span></span>
           <span></span>

@@ -76,6 +76,7 @@
   height: auto;
   border-radius: 6px;
   object-fit: cover;
+  max-height: 210px;
 }
 
 .cta-card-panel__card-title {
