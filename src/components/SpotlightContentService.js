@@ -6,6 +6,7 @@ const SpotlightContentService = ({
   field_component_id,
   data_id_for_anchor_linking,
   title,
+  description, // ✅ added
   background_color,
   image_alignment,
   image,
@@ -31,8 +32,8 @@ const SpotlightContentService = ({
   const mainImageUrl = getImageUrl(image);
   const logoUrl = getImageUrl(logo_or_service_pillar);
 
-  const bgClass = background_color ? `bg-${background_color}` : 'bg-white';
-  const alignClass = image_alignment ? `align-${image_alignment}` : 'align-right';
+  const bgClass = background_color ? `bg-${background_color}` : "bg-white";
+  const alignClass = image_alignment ? `align-${image_alignment}` : "align-right";
 
   return (
     <section
@@ -50,6 +51,11 @@ const SpotlightContentService = ({
           )}
 
           {title && <h2 className="spotlight-title">{title}</h2>}
+
+          {/* ✅ Render description if exists */}
+          {description && (
+            <p className="spotlight-description">{description}</p>
+          )}
 
           {link?.label && link?.url && (
             <a

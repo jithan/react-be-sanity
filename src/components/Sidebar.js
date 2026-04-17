@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { client } from "../sanityClient";
 import { iconMap } from "../icons";
+import LanguageSwitcher from "./LanguageSwitcher";
+
 import "../styles/Sidebar.css";
 
 const sidebarQuery = `*[_type == "sidebar"][0]{
@@ -14,14 +16,14 @@ const sidebarQuery = `*[_type == "sidebar"][0]{
       icon
     }
   },
-   footerLinks[]{
+  footerLinks[]{
     label,
     url,
     icon
   }
 }`;
 
-function Sidebar() {
+function Sidebar({ currentLang, translations }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ function Sidebar() {
     });
   }, []);
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) return null;
 
   return (
     <aside className="sidebar">
@@ -40,6 +42,16 @@ function Sidebar() {
         <div className="logo-box"></div>
         <h2>{data.title}</h2>
       </div>
+
+      {/* ✅ LANGUAGE SWITCHER (ONLY IF MULTI LANG) */}
+      {translations && translations.length > 1 && (
+        <div className="sidebar-lang">
+          <LanguageSwitcher
+            currentLang={currentLang}
+            translations={translations}
+          />
+        </div>
+      )}
 
       {/* SECTIONS */}
       {data.sections?.map((section, i) => (
@@ -59,7 +71,7 @@ function Sidebar() {
         </div>
       ))}
 
-      {/* SETTINGS (optional fixed bottom) */}
+      {/* FOOTER */}
       <div className="sidebar-footer">
         {data.footerLinks?.map((link, i) => {
           const Icon = iconMap[link.icon];

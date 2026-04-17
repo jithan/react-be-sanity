@@ -9,3 +9,15 @@
   line-height: 1.6;
   color: inherit;
 }
+.topic-card {
+  cursor: default;
+}
+
+.topic-card.clickable {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.topic-card.clickable:hover {
+  transform: translateY(-5px);
+}

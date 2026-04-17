@@ -2,9 +2,30 @@ import React, { useEffect, useState, useMemo } from "react";
 import "../styles/AnchorLinks.css";
 
 const AnchorLinks = ({ items }) => {
-  // ✅ FIX: memoize safeItems
+  // ✅ helper: safely extract value
+  const getText = (val) => {
+    if (!val) return "";
+
+    // if already string
+    if (typeof val === "string") return val;
+
+    // if Sanity localized object
+    if (typeof val === "object" && "value" in val) {
+      return val.value || "";
+    }
+
+    return "";
+  };
+
+  // ✅ sanitize items
   const safeItems = useMemo(() => {
-    return Array.isArray(items) ? items : [];
+    if (!Array.isArray(items)) return [];
+
+    return items.map((item) => ({
+      ...item,
+      linkText: getText(item.linkText),
+      componentId: item.componentId || "",
+    }));
   }, [items]);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -31,7 +52,7 @@ const AnchorLinks = ({ items }) => {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
       setActiveIndex(index);
 
-      // ✅ update URL hash cleanly
+      // ✅ clean URL update
       window.history.replaceState(null, "", componentId);
     }
   };
@@ -41,7 +62,7 @@ const AnchorLinks = ({ items }) => {
       <div className="anchor-links-container">
         {safeItems.map((item, index) => (
           <button
-            key={item.componentId || index} // ✅ better key
+            key={item.componentId || index}
             className={`anchor-link-item ${
               index === activeIndex ? "active" : ""
             }`}

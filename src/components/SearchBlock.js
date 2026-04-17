@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { client } from "../sanityClient";
 import "../styles/SearchBlock.css";
+import { PortableText } from "@portabletext/react";
 // import { Link } from "react-router-dom";
 
 const SearchBlock = ({
@@ -44,11 +45,11 @@ const SearchBlock = ({
   }, [query]);
 
   // 🔍 Fetch results
-const fetchResults = async (value) => {
-  setLoading(true);
+  const fetchResults = async (value) => {
+    setLoading(true);
 
-  try {
-    const res = await client.fetch(`*[
+    try {
+      const res = await client.fetch(`*[
       _type in ["Landingpage","Services","article","page"]
     ]{
       _id,
@@ -60,29 +61,29 @@ const fetchResults = async (value) => {
       "slug": slug.current
     }[0...50]`);
 
-    console.log("RAW:", res);
+      console.log("RAW:", res);
 
-    const filtered = res.filter((item) => {
-      const text = `
+      const filtered = res.filter((item) => {
+        const text = `
         ${item.title || ""}
         ${item.excerpt || ""}
         ${item.description || ""}
         ${item.bodyText || ""}
       `.toLowerCase();
 
-      return text.includes(value.toLowerCase());
-    });
+        return text.includes(value.toLowerCase());
+      });
 
-    console.log("FILTERED:", filtered);
+      console.log("FILTERED:", filtered);
 
-    setResults(filtered.slice(0, 10));
+      setResults(filtered.slice(0, 10));
 
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 🔥 Highlight text
   const highlightText = (text) => {
@@ -101,9 +102,6 @@ const fetchResults = async (value) => {
 
         {title && <h2 className="search-title">{title}</h2>}
 
-        {description && (
-          <p className="search-description">{description}</p>
-        )}
 
         {/* 🔍 Search Input */}
         <input
@@ -129,7 +127,7 @@ const fetchResults = async (value) => {
             <div key={item._id} className="search-item">
 
               {/* 🔖 Type */}
-              <span className="type-tag">{item._type}</span>
+              { /*<span className="type-tag">{item._type}</span> */}
 
               {/* 📝 Title */}
               <h4
@@ -168,7 +166,11 @@ const fetchResults = async (value) => {
           ))}
 
         </div>
-
+        {description && (
+          <div className="search-description">
+            <PortableText value={description} />
+          </div>
+        )}
       </div>
     </section>
   );

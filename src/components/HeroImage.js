@@ -2,6 +2,22 @@ import React from "react";
 import { PortableText } from "@portabletext/react";
 import "../styles/HeroSection.css";
 
+// ✅ helper
+const resolveField = (field, lang = "en") => {
+  if (!field) return "";
+
+  if (Array.isArray(field)) {
+    const match = field.find((f) => f.language === lang);
+    return match?.value || "";
+  }
+
+  if (typeof field === "object" && field.value) {
+    return field.value;
+  }
+
+  return field;
+};
+
 const HeroImage = ({
   field_component_title,
   field_component_title_eyebrow,
@@ -10,7 +26,8 @@ const HeroImage = ({
   field_component_list_image_alignment,
   image_field,
   logo_service_pillar_sm,
-  data_id_for_anchor_linking
+  data_id_for_anchor_linking,
+  lang = "en" // ✅ important
 }) => {
 
   const getImageUrl = (image) => {
@@ -31,9 +48,14 @@ const HeroImage = ({
 
   const heroImage = getImageUrl(image_field);
   const logoUrl = getImageUrl(logo_service_pillar_sm);
-const ctaText = field_link?.label;
-const ctaUrl = field_link?.url;
-const newTab = field_link?.openInNewTab;
+
+  // ✅ FIXED
+  const eyebrow = resolveField(field_component_title_eyebrow, lang);
+  const title = resolveField(field_component_title, lang);
+  const ctaText = resolveField(field_link?.label, lang);
+
+  const ctaUrl = field_link?.url;
+  const newTab = field_link?.openInNewTab;
 
   const alignment = field_component_list_image_alignment || "right";
 
@@ -53,31 +75,37 @@ const newTab = field_link?.openInNewTab;
           />
         )}
 
-        {field_component_title_eyebrow && (
+        {/* ✅ FIXED */}
+        {eyebrow && (
           <span className="hero-eyebrow">
-            {field_component_title_eyebrow}
+            {eyebrow}
           </span>
         )}
 
-        <h1 className="hero-title">
-          {field_component_title}
-        </h1>
+        {/* ✅ FIXED */}
+        {title && (
+          <h1 className="hero-title">
+            {title}
+          </h1>
+        )}
 
         {field_component_description && (
           <div className="hero-description">
             <PortableText value={field_component_description} />
           </div>
         )}
-{ctaText && ctaUrl && (
-  <a
-    href={ctaUrl}
-    className="hero-cta"
-    target={newTab ? "_blank" : "_self"}
-    rel="noopener noreferrer"
-  >
-    {ctaText}
-  </a>
-)}
+
+        {/* ✅ FIXED */}
+        {ctaText && ctaUrl && (
+          <a
+            href={ctaUrl}
+            className="hero-cta"
+            target={newTab ? "_blank" : "_self"}
+            rel="noopener noreferrer"
+          >
+            {ctaText}
+          </a>
+        )}
 
       </div>
 

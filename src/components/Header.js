@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { client } from '../sanityClient';
+import LanguageSwitcher from "./LanguageSwitcher";
 import '../styles/Header.css';
 
 function Header() {
@@ -48,6 +49,7 @@ function Header() {
             <Link to="/movies">Movies</Link>
           </li>
         </ul>
+         <LanguageSwitcher />
       </div>
     </nav>
   );

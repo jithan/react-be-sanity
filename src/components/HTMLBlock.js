@@ -3,27 +3,39 @@ import { PortableText } from "@portabletext/react";
 import "../styles/HTMLBlock.css";
 
 const HTMLBlock = ({
-  field_component_id,
-  data_id_for_anchor_linking,
   title,
-  text_format,
-  description_rich,
-  description_html
+  tag, // ✅ NEW
+  format,
+  contentRich,
+  contentHtml,
+  anchorId
 }) => {
   return (
-    <section
-      className="html-block"
-      id={data_id_for_anchor_linking}
-    >
+    <section className="html-block" id={anchorId}>
+      
+      {/* 🏷️ Tag / Badge */}
+      {tag?.text && (
+        <div className={`html-block-tag tag--${tag.style || "default"}`}>
+          {tag.icon && <span className="tag-icon">{tag.icon}</span>}
+          <span className="tag-text">{tag.text}</span>
+        </div>
+      )}
+
+      {/* 📝 Title */}
       {title && <h2 className="html-block-title">{title}</h2>}
 
       <div className="html-block-content">
-        {text_format === 'richText' && description_rich ? (
-          <PortableText value={description_rich} />
-        ) : text_format === 'rawHtml' && description_html ? (
-          <div dangerouslySetInnerHTML={{ __html: description_html }} />
-        ) : null}
+
+        {format === "rich" && contentRich && (
+          <PortableText value={contentRich} />
+        )}
+
+        {format === "html" && contentHtml && (
+          <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+        )}
+
       </div>
+
     </section>
   );
 };

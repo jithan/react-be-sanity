@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { client } from '../sanityClient';
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import './Header.css';
 
 function Header() {
+  const { lang = "en" } = useParams(); // 🌐 CURRENT LANGUAGE
+
   const [menuItems, setMenuItems] = useState([]);
   const [megaMenu, setMegaMenu] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +59,7 @@ function Header() {
     fetchMenu();
   }, []);
 
-  // ✅ CENTRAL ROUTING LOGIC
+  // 🌐 CENTRAL ROUTING WITH LANGUAGE
   const buildUrl = (link) => {
     if (!link?.slug) return "#";
 
@@ -67,7 +70,10 @@ function Header() {
     };
 
     const base = map[link._type] || "";
-    return base ? `/${base}/${link.slug}` : `/${link.slug}`;
+
+    return base
+      ? `/${lang}/${base}/${link.slug}`
+      : `/${lang}/${link.slug}`;
   };
 
   const closeMobileMenu = () => {
@@ -91,9 +97,9 @@ function Header() {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        
+
         {/* LOGO */}
-        <Link to="/" className="nav-brand">
+        <Link to={`/${lang}`} className="nav-brand">
           Lorum Ipsum
         </Link>
 
@@ -107,7 +113,7 @@ function Header() {
               {!loading &&
                 menuItems.map((item) => (
                   <li key={item._id}>
-                    <Link to={`/pages/${item.slug?.current}`}>
+                    <Link to={`/${lang}/pages/${item.slug?.current}`}>
                       {item.menuTitle || item.title}
                     </Link>
                   </li>
@@ -126,7 +132,6 @@ function Header() {
                     e.preventDefault();
                     toggleMegaMenu();
                   }}
-                  aria-expanded={isMegaMenuOpen}
                 >
                   {megaMenu?.title || 'Menu'}
                 </button>
@@ -162,11 +167,13 @@ function Header() {
                 )}
               </li>
 
+              {/* ARTICLES */}
               <li>
-                <Link to="/articles">Articles</Link>
+                <Link to={`/${lang}/articles`}>Articles</Link>
               </li>
 
             </ul>
+
           </div>
 
           {/* ================= MOBILE ================= */}
@@ -189,7 +196,7 @@ function Header() {
                     menuItems.map((item) => (
                       <li key={item._id}>
                         <Link
-                          to={`/pages/${item.slug?.current}`}
+                          to={`/${lang}/pages/${item.slug?.current}`}
                           onClick={closeMobileMenu}
                         >
                           {item.menuTitle || item.title}
@@ -207,12 +214,15 @@ function Header() {
                   </li>
 
                   <li>
-                    <Link to="/articles" onClick={closeMobileMenu}>
+                    <Link to={`/${lang}/articles`} onClick={closeMobileMenu}>
                       Articles
                     </Link>
                   </li>
 
                 </ul>
+
+                {/* 🌐 LANGUAGE SWITCH (MOBILE) */}
+                <LanguageSwitcher />
               </div>
 
               {/* MEGA PANEL */}
